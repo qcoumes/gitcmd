@@ -161,7 +161,8 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.push(local, HOST_DIR)
         
         self.assertEqual(ret, 0)
-        self.assertTrue('Branch master set up to track remote branch master from origin.' in out)
+        self.assertEqual("Branch 'master' set up to track remote branch 'master' from 'origin'.\n",
+                         out)
     
     
     def test0501_push_need_credentials(self):
@@ -308,7 +309,7 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local2')
         ret, out, err = gitcmd.pull(local2, HOST_DIR)
         self.assertEqual(ret, 0)
-        self.assertEqual("Already up-to-date.\n", out)
+        self.assertEqual("Already up to date.\n", out.replace('-', ' ')
     
     
     def test1002_pull_need_credentials(self):
