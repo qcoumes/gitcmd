@@ -309,7 +309,7 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local2')
         ret, out, err = gitcmd.pull(local2, HOST_DIR)
         self.assertEqual(ret, 0)
-        self.assertEqual("Already up to date.\n", out.replace('-', ' ')
+        self.assertEqual("Already up to date.\n", out.replace('-', ' '))
     
     
     def test1002_pull_need_credentials(self):
