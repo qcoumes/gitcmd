@@ -252,7 +252,7 @@ def push(path, url, username=None, password=None):
         os.chdir(path)
         
         ret, branch, err = current_branch(path)
-        if ret:  # pragma : no cover
+        if ret:  # pragma: no cover
             return (ret, branch, "Couldn't retrieve current branch name \n".encode() + err)
         
         if username and password:
