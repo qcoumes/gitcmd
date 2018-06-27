@@ -6,7 +6,7 @@
 # gitcmd
 
 ## Installation
-pip install -e git://github.com/qcoumes/gitcmd#egg=gitcmd
+``pip install -e git://github.com/qcoumes/gitcmd#egg=gitcmd``
 
 ## Commands
 **gitcmd** provides an interface for the basic commands of git :
