@@ -12,7 +12,7 @@ CLASSIFIERS = [
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
     'Natural Language :: English',
-    'Operating System :: Linux',
+    'Operating System :: POSIX :: Linux',
     'Programming Language :: Python :: 3.5',
     'Topic :: Software Development :: Libraries :: Python Modules'
 ]
