@@ -4,6 +4,10 @@
 [![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/qcoumes/gitcmd/blob/master/LICENSE)
 
 # gitcmd
+
+## Installation
+pip install -e git://github.com/qcoumes/gitcmd#egg=gitcmd
+
 ## Commands
 **gitcmd** provides an interface for the basic commands of git :
  * clone
