@@ -161,8 +161,11 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.push(local, HOST_DIR)
         
         self.assertEqual(ret, 0)
-        self.assertEqual("Branch 'master' set up to track remote branch 'master' from 'origin'.\n",
-                         out)
+        self.assertEqual(
+            ("Branch 'master' set up to track remote branch 'master' ".replace("'", '')
+                + "from 'origin'.\n".replace("'", '')),
+            out
+        )
     
     
     def test0501_push_need_credentials(self):
