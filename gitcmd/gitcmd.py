@@ -11,21 +11,25 @@ import locale
 
 from urllib.parse import urlparse
 
-
+# Can be override to specify github language. Should be in the form 'lang.encoding'.
+# For instance : 'en-US.UTF-8'
 GIT_LANG = '.'.join(locale.getdefaultlocale())
 
 
 def add(path):
     """Add the file pointed by path to the index.
     
+    if path point to a directory, update the index to match the current state of the directory as
+    a whole
+    
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     
     cwd = os.getcwd()
     
     try:
-        os.chdir(os.path.dirname(path))
-        cmd = "LANGUAGE=" + GIT_LANG + " git add " + os.path.basename(path)
+        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        cmd = "LANGUAGE=" + GIT_LANG + " git add " + path
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
@@ -38,13 +42,13 @@ def commit(path, log):
     """Record changes to the repository using log and -m option.
     
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     
     cwd = os.getcwd()
     
     try:
-        os.chdir(os.path.dirname(path))
-        cmd = "LANGUAGE=" + GIT_LANG + " git commit -m " + '"' + log + '"'
+        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        cmd = "LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
@@ -56,15 +60,24 @@ def commit(path, log):
 def checkout(path, branch=None, new=False):
     """Switch branches or restore working tree files.
     
+    Parameter:
+        path: (str)
+            if no branch given - Path to the entry wich should be restored.
+            if branch is given - Path from where git checkout command will be executed.
+        branch: (str) name of the branch which we should checkout to
+        new: (bool) Wheter we should create a new branch (True) or not (False)
+    
+    
+    Restore working tree files pointed by path if no <branch> is given.
     Switch to <branch> if provided, creating it if new is True.
     
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     try:
-        os.chdir(os.path.dirname(path)) if not branch else os.chdir(path)
-        cmd = ("LANGUAGE=" + GIT_LANG + " git checkout " + os.path.basename(path) if not branch
+        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        cmd = ("LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
                 else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
                     else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -79,7 +92,7 @@ def status(path):
     """Show the working tree status.
     
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     try:
@@ -98,7 +111,7 @@ def branch(path):
     """List branches.
     
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     try:
@@ -116,7 +129,7 @@ def current_branch(path):
     """Get current branch name
     
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     try:
@@ -132,6 +145,13 @@ def current_branch(path):
 
 def reset(path, mode="mixed", commit='HEAD'):
     """Reset current HEAD to the specified state.
+    
+    Parameter:
+        path   : (str) path the the entry we should be reset.
+        mode   : (str) Mode for the reset, should be 'soft', 'mixed', 'hard', 'merge' or 'keep'.
+        commit : (str) To which commit the reset shoul be done. Must be a commit's hash, 'HEAD' for
+                       the last commit, to which '~' or '^' can be appended to choose ancestor or
+                       parent.
     
     Resets the current branch head to <commit>
     and possibly updates the index (resetting it to the tree of <commit>) and the working tree
@@ -159,7 +179,7 @@ def reset(path, mode="mixed", commit='HEAD'):
             has local changes, reset is aborted.
     
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     if mode and mode not in ["soft", "mixed", "hard", "merge", "keep"]:
@@ -167,7 +187,7 @@ def reset(path, mode="mixed", commit='HEAD'):
                        + "'soft', 'mixed', 'hard', 'merge' or 'keep'.")
     
     try:
-        os.chdir(path)
+        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
         cmd = "LANGUAGE=" + GIT_LANG + " git reset --" + mode + " " + commit
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
@@ -180,8 +200,14 @@ def reset(path, mode="mixed", commit='HEAD'):
 def pull(path, url, username=None, password=None):
     """Fetch from and integrate with another repository or a local branch.
     
+    Parameter:
+        path : (str) Path from where git pull command will be executed
+        url  : (str) URL of the remote
+        username : (str) Username for authentification if repository is private
+        password : (str) Password for authentification if repository is private
+    
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     try:
@@ -219,7 +245,7 @@ def push(path, url, username=None, password=None):
     """Update remote refs along with associated objects.
     
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     try:
@@ -260,8 +286,15 @@ def push(path, url, username=None, password=None):
 def clone(path, url, to=None, username=None, password=None):
     """Clone a repository into a new directory.
     
+    Parameter:
+        path : (str) Path from where git clone command will be executed
+        url  : (str) URL of the repository
+        to   : (str) Directory to which clone the repository, default is repository's name
+        username : (str) Username for authentification if repository is private
+        password : (str) Password for authentification if repository is private
+    
     Return:
-        (return_code, stdout, stderr), both stderr and stdout are bytes"""
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
     cwd = os.getcwd()
     
     try:
