@@ -1,6 +1,5 @@
 
 # gitcmd
-
 ## Commands
 **gitcmd** provides an interface for the basic commands of git :
  * clone
@@ -15,7 +14,9 @@
 
 Every function of this module returns a tuple *(return_code, stdout, stderr)*.
 **Be careful** : Git sometimes return information on stderr, even if return_code = 0.
-for instance `Switched to a new branch 'X'` when checking out to a new branch.
+for instance `Switched to a new branch "X"` is given on stderr when checking out to a new branch.
+
+
 
 ### Clone
 ```python3
@@ -26,12 +27,14 @@ Clone a repository into a new directory.
 ##### Parameter:
 *    path : (str) Path from where git clone command will be executed
 *    url  : (str) URL of the repository
-*    to   : (str) Directory to which clone the repository, default is repository's name
+*    to   : (str) Directory to which clone the repository, default is repository"s name
 *    username : (str) Username for authentification if repository is private
 *    password : (str) Password for authentification if repository is private
 
 ##### Return:
 * (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8
+
+
 
 ### Add 
 ```python3
@@ -56,6 +59,8 @@ sitory is private
 ##### Return:
 * (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8
 
+
+
 ### Checkout
 ```python3
 def checkout(path, branch=None, new=False)
@@ -75,17 +80,19 @@ Switch to <branch> if provided, creating it if new is True.
 ##### Return:
 *    (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8
 
+
+
 ### Reset
 ```python3
-def reset(path, mode="mixed", commit='HEAD')
+def reset(path, mode="mixed", commit="HEAD")
 ```
 Reset current HEAD to the specified state.
     
 ##### Parameter:
 *    path   : (str) path the the entry we should be reset. If path point to a directory, update the index to match the current state of the directory as a whole.
-*    mode   : (str) Mode for the reset, should be 'soft', 'mixed', 'hard', 'merge' or 'keep'.
-*    commit : (str) To which commit the reset shoul be done. Must be a commit's hash, 'HEAD' for
-                   the last commit, to which '~' or '^' can be appended to choose ancestor or
+*    mode   : (str) Mode for the reset, should be "soft", "mixed", "hard", "merge" or "keep".
+*    commit : (str) To which commit the reset shoul be done. Must be a commit"s hash, "HEAD" for
+                   the last commit, to which "~" or "^" can be appended to choose ancestor or
                    parent.
     
 Resets the current branch head to <commit>
@@ -100,6 +107,8 @@ following:
     
 ##### Return:
 *    (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+
+
 
 ### Pull
 ```python3
@@ -116,6 +125,8 @@ Fetch from and integrate with another repository or a local branch.
 ##### Return:
 *    (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8
 
+
+
 ### Push
 ```python3
 def push(path, url, username=None, password=None)
@@ -131,6 +142,8 @@ Update remote refs along with associated objects.
 ##### Return:
 *    (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8
 
+
+
 ### Status
 ```python3
 def status(path)
@@ -142,6 +155,8 @@ Show the working tree status.
 
 ##### Return:
 *    (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"
+
+
 
 ### Branch
 ```python3
