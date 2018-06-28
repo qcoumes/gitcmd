@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/qcoumes/gitcmd.svg?branch=master)](https://travis-ci.org/qcoumes/gitcmd)
-[![Coverage](https://coveralls.io/repos/github/qcoumes/gitcmd/badge.svg?branch=master&service=github)](https://coveralls.io/github/qcoumes/gitcmd?branch=master)
-[![](https://img.shields.io/badge/python-3.4%2C%203.5%2C%203.6-brightgreen.svg)](#)
-[![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/qcoumes/gitcmd/blob/master/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/qcoumes/gitcmd/badge.svg?branch=master)](https://coveralls.io/github/qcoumes/gitcmd?branch=master)
+[![Python 3.4, 3.5, 3.6](https://img.shields.io/badge/python-3.4%2C%203.5%2C%203.6-brightgreen.svg)](#)
+[![License MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/qcoumes/gitcmd/blob/master/LICENSE)
 
 # gitcmd
 
@@ -25,6 +25,10 @@ From pip:
  * push
  * status
  * branch
+
+It also provides some useful functions:
+ * `in_repository(path)` - Check if path is inside a repository
+ * `current_branch(path)` - Return the name of the current branch of the repository pointed by path
 
 Every function of this module returns a tuple *(return_code, stdout, stderr)*.  
 **Be careful** : Git sometimes return information on stderr, even if return_code = 0.  
