@@ -67,11 +67,11 @@ class TestGitcmd(unittest.TestCase):
     
     
     def test0102_clone_need_credentials(self):
-        pass #TODO: Testing access denied by a private repository when not providing credentials
+        pass #TODO - Testing access denied by a private repository when not providing credentials
     
     
     def test0103_clone_credentials(self):
-        pass #TODO: Testing access to a private repository when providing credentials
+        pass #TODO - Testing access to a private repository when providing credentials
     
     
     def test0200_add(self):
@@ -184,11 +184,11 @@ class TestGitcmd(unittest.TestCase):
     
     
     def test0501_push_need_credentials(self):
-        pass #TODO: Testing access denied by a private repository when not providing credentials
+        pass #TODO - Testing access denied by a private repository when not providing credentials
     
     
     def test0502_push_credentials(self):
-        pass #TODO: Testing access to a private repository when providing credentials
+        pass #TODO - Testing access to a private repository when providing credentials
     
     
     def test0503_push_exception(self):
@@ -321,7 +321,7 @@ class TestGitcmd(unittest.TestCase):
     
     def test0903_reset_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
-            gitcmd.branch('/tmp')
+            gitcmd.reset('/tmp')
     
     
     def test1000_pull(self):
@@ -356,11 +356,11 @@ class TestGitcmd(unittest.TestCase):
     
     
     def test1002_pull_need_credentials(self):
-        pass #TODO: Testing access denied by a private repository when not providing credentials
+        pass #TODO - Testing access denied by a private repository when not providing credentials
     
     
     def test1003_pull_credentials(self):
-        pass #TODO: Testing access to a private repository when providing credentials
+        pass #TODO - Testing access to a private repository when providing credentials
     
     
     def test0901_pull_exception(self):

@@ -349,9 +349,6 @@ def clone(path, url, to=None, username=None, password=None):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
-    if not in_repository(path):
-        raise NotInRepositoryError("'" + path + "' is not inside a repository")
-    
     cwd = os.getcwd()
     
     try:
