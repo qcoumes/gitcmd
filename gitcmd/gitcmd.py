@@ -37,7 +37,7 @@ def in_repository(path, ignore=True):
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         p.communicate()
         ret = p.returncode == 0
-        if not in_ignore:
+        if not ignore:
             cmd = 'git check-ignore ' + path + ' 2> /dev/null > /dev/null'
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             p.communicate()
