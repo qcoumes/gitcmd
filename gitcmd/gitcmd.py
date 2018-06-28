@@ -11,9 +11,31 @@ import locale
 
 from urllib.parse import urlparse
 
-# Can be override to specify github language. Should be in the form 'lang.encoding'.
+
+# Can be override to specify git language. Should be in the form 'lang.encoding'.
 # For instance : 'en-US.UTF-8'
 GIT_LANG = '.'.join(locale.getdefaultlocale())
+
+
+
+class NotInRepositoryError(Exception):
+    pass
+
+
+
+def in_repository(path):
+    """Return True if path is inside a repository, False if not."""
+    cwd = os.getcwd()
+    
+    try:
+        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        cmd = 'git rev-parse 2> /dev/null > /dev/null'
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        p.communicate()
+    finally:
+        os.chdir(cwd)
+    
+    return p.returncode == 0
 
 
 def add(path):
@@ -24,6 +46,8 @@ def add(path):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
     
     cwd = os.getcwd()
     
@@ -43,6 +67,8 @@ def commit(path, log):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
     
     cwd = os.getcwd()
     
@@ -73,6 +99,9 @@ def checkout(path, branch=None, new=False):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
     cwd = os.getcwd()
     
     try:
@@ -91,8 +120,14 @@ def checkout(path, branch=None, new=False):
 def status(path):
     """Show the working tree status.
     
+    Parameter:
+        url : (str) path to the repository
+    
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
     cwd = os.getcwd()
     
     try:
@@ -110,8 +145,14 @@ def status(path):
 def branch(path):
     """List branches.
     
+    Parameter:
+        url : (str) path to the repository
+    
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
     cwd = os.getcwd()
     
     try:
@@ -128,8 +169,14 @@ def branch(path):
 def current_branch(path):
     """Get current branch name
     
+    Parameter:
+        url : (str) path to the repository
+    
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
     cwd = os.getcwd()
     
     try:
@@ -180,11 +227,13 @@ def reset(path, mode="mixed", commit='HEAD'):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
-    cwd = os.getcwd()
-    
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
     if mode and mode not in ["soft", "mixed", "hard", "merge", "keep"]:
         raise ValueError("Mode must be one of the following: "
                        + "'soft', 'mixed', 'hard', 'merge' or 'keep'.")
+    
+    cwd = os.getcwd()
     
     try:
         os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
@@ -208,6 +257,9 @@ def pull(path, url, username=None, password=None):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
     cwd = os.getcwd()
     
     try:
@@ -246,6 +298,9 @@ def push(path, url, username=None, password=None):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
     cwd = os.getcwd()
     
     try:
@@ -295,6 +350,9 @@ def clone(path, url, to=None, username=None, password=None):
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
     cwd = os.getcwd()
     
     try:

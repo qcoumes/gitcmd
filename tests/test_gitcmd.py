@@ -85,6 +85,11 @@ class TestGitcmd(unittest.TestCase):
         self.assertEqual(out, "")
     
     
+    def test0201_add_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.add(test_file)
+    
+    
     def test0300_commit(self):
         local = os.path.join(LOCAL_DIRS, 'local')
         test_file = os.path.join(local, 'test')
@@ -98,6 +103,11 @@ class TestGitcmd(unittest.TestCase):
             "test\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test\n"
             in out
         )
+    
+    
+    def test0301_commit_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.commit('/tmp', 'log')
     
     
     def test0400_status_clean(self):
@@ -150,6 +160,11 @@ class TestGitcmd(unittest.TestCase):
         self.assertTrue('Your branch is ahead of \'origin/master\' by 1 commit.' in out)
     
     
+    def test0404_status_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.status('/tmp')
+    
+    
     def test0500_push(self):
         local = os.path.join(LOCAL_DIRS, 'local')
         test_file = os.path.join(local, 'test')
@@ -176,6 +191,11 @@ class TestGitcmd(unittest.TestCase):
         pass #TODO: Testing access to a private repository when providing credentials
     
     
+    def test0503_push_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.push('/tmp', 'url')
+    
+    
     def test0600_branch(self):
         local = os.path.join(LOCAL_DIRS, 'local')
         test_file = os.path.join(local, 'test')
@@ -189,6 +209,11 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.branch(local)
         self.assertEqual(ret, 0)
         self.assertEqual(out, "* master\n")
+    
+    
+    def test0601_branch_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.branch('/tmp')
     
     
     def test0700_checkout(self):
@@ -242,6 +267,11 @@ class TestGitcmd(unittest.TestCase):
         self.assertTrue("pathspec 'test_branch' did not match any file(s) known to git." in err)
     
     
+    def test0704_checkout_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.checkout('/tmp')
+    
+    
     def test0800_current_branch(self):
         local = os.path.join(LOCAL_DIRS, 'local')
         test_file = os.path.join(local, 'test')
@@ -254,6 +284,11 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.current_branch(local)
         self.assertEqual(ret, 0)
         self.assertEqual(out, "test_branch\n")
+    
+    
+    def test801_current_branch_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.current_branch('/tmp')
     
     
     def test0900_reset(self):
@@ -275,13 +310,18 @@ class TestGitcmd(unittest.TestCase):
         self.assertTrue("Changes not staged for commit:" in out)
     
     
-    def test0900_reset_valu_error(self):
+    def test0902_reset_value_error(self):
         local = os.path.join(LOCAL_DIRS, 'local')
         test_file = os.path.join(local, 'test')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         with self.assertRaises(ValueError):
             gitcmd.reset(local, mode="error")
+    
+    
+    def test0903_reset_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.branch('/tmp')
     
     
     def test1000_pull(self):
@@ -321,3 +361,8 @@ class TestGitcmd(unittest.TestCase):
     
     def test1003_pull_credentials(self):
         pass #TODO: Testing access to a private repository when providing credentials
+    
+    
+    def test0901_pull_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.pull('/tmp', 'url')
