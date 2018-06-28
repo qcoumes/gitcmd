@@ -177,9 +177,9 @@ class TestGitcmd(unittest.TestCase):
         
         self.assertEqual(ret, 0)
         self.assertEqual(
-            ("Branch 'master' set up to track remote branch 'master' ".replace("'", '')
-                + "from 'origin'.\n".replace("'", '')),
-            out
+            ("Branch 'master' set up to track remote branch 'master' ".replace("'", "")
+                + "from 'origin'.\n".replace("'", "")),
+            out.replace("'", "")
         )
     
     

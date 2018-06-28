@@ -1,7 +1,19 @@
 [![Build Status](https://travis-ci.org/qcoumes/gitcmd.svg?branch=master)](https://travis-ci.org/qcoumes/gitcmd)
--[![Coverage](https://coveralls.io/repos/github/qcoumes/gitcmd/badge.svg?branch=master&service=github)](https://coveralls.io/github/qcoumes/gitcmd?branch=master)
+[![Coverage](https://coveralls.io/repos/github/qcoumes/gitcmd/badge.svg?branch=master&service=github)](https://coveralls.io/github/qcoumes/gitcmd?branch=master)
+[![](https://img.shields.io/badge/python-3.4%2C%203.5%2C%203.6-brightgreen.svg)](#)
+[![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/qcoumes/gitcmd/blob/master/LICENSE)
 
 # gitcmd
+
+## Installation
+From source code:
+
+    python setup.py install
+
+From pip:
+
+    pip install -e git://github.com/qcoumes/gitcmd#egg=gitcmd
+
 ## Commands
 **gitcmd** provides an interface for the basic commands of git :
  * clone
