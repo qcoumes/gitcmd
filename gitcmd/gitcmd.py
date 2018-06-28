@@ -132,7 +132,6 @@ def status(path):
     
     try:
         os.chdir(path)
-        print(GIT_LANG)
         cmd = "LANGUAGE=" + GIT_LANG + " git status"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
