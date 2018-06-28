@@ -56,6 +56,31 @@ class TestGitcmd(unittest.TestCase):
         shutil.rmtree(LOCAL_DIRS)
     
     
+    def test0000_in_repository(self):
+        test_file = os.path.join(LOCAL_DIRS,'local/file.txt')
+        
+        self.assertTrue(gitcmd.in_repository(test_file))
+        self.assertTrue(gitcmd.in_repository(test_file, False))
+    
+    
+    def test0001_not_in_repository(self):
+        test_file = os.path.join(LOCAL_DIRS,'/tmp')
+        
+        self.assertFalse(gitcmd.in_repository(test_file))
+        self.assertFalse(gitcmd.in_repository(test_file, False))
+    
+    
+    def test0002_in_repository_ignored(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        test_file = os.path.join(LOCAL_DIRS,'local/file2.txt')
+        open(test_file, 'w+').close()
+        with open(os.path.join(local,'.gitignore'), 'w+') as f:
+            print("file2.txt", file=f)
+        
+        self.assertTrue(gitcmd.in_repository(test_file))
+        self.assertFalse(gitcmd.in_repository(test_file, False))
+    
+    
     def test0100_clone(self):
         self.assertEqual(0, gitcmd.clone(LOCAL_DIRS, HOST_DIR)[0])
         self.assertTrue(os.path.isdir(os.path.join(LOCAL_DIRS, 'host')))

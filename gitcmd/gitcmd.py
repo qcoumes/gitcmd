@@ -23,8 +23,12 @@ class NotInRepositoryError(Exception):
 
 
 
-def in_repository(path):
-    """Return True if path is inside a repository, False if not."""
+def in_repository(path, ignore=True):
+    """Return True if path is inside a repository, False if not.
+        
+    If <in_ignore> is set to False, will also return False if the path is inside a repository but
+    is ignored by a .gitignore.
+    """
     cwd = os.getcwd()
     
     try:
@@ -32,10 +36,16 @@ def in_repository(path):
         cmd = 'git rev-parse 2> /dev/null > /dev/null'
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         p.communicate()
+        ret = p.returncode == 0
+        if not in_ignore:
+            cmd = 'git check-ignore ' + path + ' 2> /dev/null > /dev/null'
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            p.communicate()
+            ret &= p.returncode == 1  # return code is 1 if a file is not ignored
     finally:
         os.chdir(cwd)
     
-    return p.returncode == 0
+    return ret
 
 
 def add(path):
