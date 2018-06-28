@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/qcoumes/gitcmd.svg?branch=master)](https://travis-ci.org/qcoumes/gitcmd)
-[![Coverage](https://coveralls.io/repos/github/qcoumes/gitcmd/badge.svg?branch=master&service=github)](https://coveralls.io/github/qcoumes/gitcmd?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/qcoumes/gitcmd/badge.svg?branch=master)](https://coveralls.io/github/qcoumes/gitcmd?branch=master)
 [![](https://img.shields.io/badge/python-3.4%2C%203.5%2C%203.6-brightgreen.svg)](#)
 [![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/qcoumes/gitcmd/blob/master/LICENSE)
 
