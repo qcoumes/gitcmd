@@ -27,8 +27,8 @@ From pip:
  * branch
 
 It also provides some useful functions:
- * `in_repository(path)` - Check if path is inside a repository
- * `current_branch(path)` - Return the name of the current branch of the repository pointed by path
+ * `in_repository(path, ignore=True)` - Check if path is inside a repository. Setting 'ignore' to False will consider ignored entry outside of repository.
+ * `current_branch(path)` - Return the name of the current branch of the repository pointed by path.
 
 Every function of this module returns a tuple *(return_code, stdout, stderr)*.  
 **Be careful** : Git sometimes return information on stderr, even if return_code = 0.  
