@@ -87,7 +87,7 @@ class TestGitcmd(unittest.TestCase):
     
     def test0201_add_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
-            gitcmd.add(test_file)
+            gitcmd.add('/tmp')
     
     
     def test0300_commit(self):
