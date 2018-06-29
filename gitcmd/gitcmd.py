@@ -48,6 +48,24 @@ def in_repository(path, ignore=True):
     return ret
 
 
+def remote_url(path, remote='origin'):
+    """Return the remote's URL (default 'origin') of the repository pointed by path."""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
+    cwd = os.getcwd()
+    
+    try:
+        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        cmd = "git config --get remote." + remote + ".url"
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        out, err = p.communicate()
+    finally:
+        os.chdir(cwd)
+    
+    return (p.returncode, out.decode(), err.decode())
+    
+
 def add(path):
     """Add the file pointed by path to the index.
     

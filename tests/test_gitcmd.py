@@ -388,6 +388,18 @@ class TestGitcmd(unittest.TestCase):
         pass #TODO - Testing access to a private repository when providing credentials
     
     
-    def test0901_pull_exception(self):
+    def test1004_pull_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.pull('/tmp', 'url')
+    
+    
+    def test_1100_remote_url(self):
+        gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
+        ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[:-1], HOST_DIR)
+    
+    
+    def test_1101_remote_url_exception(self, remote='origin'):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.remote_url('/tmp')
