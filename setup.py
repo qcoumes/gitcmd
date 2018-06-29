@@ -26,8 +26,8 @@ long_description = (
 
 setup(
     name='gitcmd',
-    version='0.1.0',
-    description='A light git interface in python of the basic commands.',
+    version='1.0.0',
+    description='A light interface in python for the basic git commands.',
     long_description=long_description,
     author='Coumes Quentin',
     author_email='coumes.quentin@gmail.com',
