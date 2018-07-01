@@ -1,5 +1,6 @@
 """Setuptools entry point."""
-import codecs, os
+import codecs
+import os
 
 try:
     from setuptools import setup
