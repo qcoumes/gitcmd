@@ -316,7 +316,7 @@ def pull(path, url, username=None, password=None):
         os.chdir(cwd)
     
     if p.returncode and "terminal prompts disabled" in err:
-        return return_code, out, "Repository is private, please provide credentials"
+        return p.returncode, out, "Repository is private, please provide credentials"
     return (p.returncode, out, err)
 
 
@@ -361,7 +361,7 @@ def push(path, url, username=None, password=None):
         os.chdir(cwd)
     
     if p.returncode and "terminal prompts disabled" in err:
-        return return_code, out, "Repository is private, please provide credentials"
+        return p.returncode, out, "Repository is private, please provide credentials"
     return (p.returncode, out, err)
 
 
@@ -409,5 +409,5 @@ def clone(path, url, to=None, username=None, password=None):
         os.chdir(cwd)
     
     if p.returncode and "terminal prompts disabled" in err:
-        return return_code, out, "Repository is private, please provide credentials"
+        return p.returncode, out, "Repository is private, please provide credentials"
     return (p.returncode, out, err)
