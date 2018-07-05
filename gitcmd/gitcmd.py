@@ -139,6 +139,14 @@ def checkout(path, branch=None, new=False):
                     else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
+        
+        if branch and new and not p.returncode:  # Automaticaly set upstream on new branch
+            cmd = ("LANGUAGE=" + GIT_LANG
+                 + " git push -u origin " + branch)
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            out2, err2 = p.communicate()
+            out += out2
+            err += err2
     finally:
         os.chdir(cwd)
     
@@ -347,7 +355,6 @@ def push(path, url, username=None, password=None):
             raise ValueError("Password must be provided if username is given" if username
                              else "Username must be provided if password is given")
             
-        cmd += " -u origin " + branch
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
         

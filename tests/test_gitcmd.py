@@ -201,11 +201,7 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.push(local, HOST_DIR)
         
         self.assertEqual(ret, 0)
-        self.assertEqual(
-            ("Branch 'master' set up to track remote branch 'master' ".replace("'", "")
-                + "from 'origin'.\n".replace("'", "")),
-            out.replace("'", "")
-        )
+        self.assertTrue("master -> master" in err)
     
     
     def test0501_push_need_credentials(self):
@@ -264,7 +260,7 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.checkout(local, 'test_branch', True)
         self.assertEqual(ret, 0)
-        self.assertEqual("Switched to a new branch 'test_branch'\n", err)
+        self.assertTrue("Switched to a new branch 'test_branch'\n" in err)
         ret, out, err = gitcmd.branch(local)
         self.assertEqual("  master\n* test_branch\n", out)
     
