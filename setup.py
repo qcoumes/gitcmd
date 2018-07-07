@@ -33,6 +33,7 @@ setup(
     version='1.0.0',
     description='A light interface in python for the basic git commands.',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Coumes Quentin',
     author_email='coumes.quentin@gmail.com',
     url='https://github.com/qcoumes/gitcmd',
