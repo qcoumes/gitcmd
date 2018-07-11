@@ -131,9 +131,10 @@ following:
 
 ### Pull
 ```python3
-def pull(path, url, username=None, password=None)
+def pull(path, url=None, username=None, password=None)
 ```
 Fetch from and integrate with another repository or a local branch.
+If <url> is not given, will try to get the url of origin.
 
 ##### Parameter:
 *    path : (str) Path from where git pull command will be executed
@@ -148,9 +149,10 @@ Fetch from and integrate with another repository or a local branch.
 
 ### Push
 ```python3
-def push(path, url, username=None, password=None)
+def push(path, url=None, username=None, password=None)
 ```
 Update remote refs along with associated objects.
+If <url> is not given, will try to get the url of origin.
 
 ##### Parameter:
 *    path : (str) Path from where git push command will be executed
