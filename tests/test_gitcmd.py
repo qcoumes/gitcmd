@@ -204,6 +204,20 @@ class TestGitcmd(unittest.TestCase):
         self.assertTrue("master -> master" in err)
     
     
+    def test0502_push_no_url(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        test_file = os.path.join(local, 'test')
+        
+        gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
+        open(test_file, 'w+').close()
+        gitcmd.add(test_file)
+        gitcmd.commit(test_file, 'test')
+        ret, out, err = gitcmd.push(local)
+        
+        self.assertEqual(ret, 0)
+        self.assertTrue("master -> master" in err)
+    
+    
     def test0501_push_need_credentials(self):
         pass #TODO - Testing access denied by a private repository when not providing credentials
     
@@ -358,6 +372,24 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.commit(test_file, 'test')
         gitcmd.push(local, HOST_DIR)
         ret, out, err = gitcmd.pull(local2, HOST_DIR)
+        self.assertEqual(ret, 0)
+        self.assertTrue("Fast-forward\n testfile" in out)
+        self.assertTrue(os.path.isfile(test_file2))
+    
+    
+    def test1000_pull_no_url(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        local2 = os.path.join(LOCAL_DIRS, 'local2')
+        test_file = os.path.join(local, 'testfile')
+        test_file2 = os.path.join(local, 'testfile')
+        
+        gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
+        gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local2')
+        open(test_file, 'w+').close()
+        gitcmd.add(test_file)
+        gitcmd.commit(test_file, 'test')
+        gitcmd.push(local, HOST_DIR)
+        ret, out, err = gitcmd.pull(local2)
         self.assertEqual(ret, 0)
         self.assertTrue("Fast-forward\n testfile" in out)
         self.assertTrue(os.path.isfile(test_file2))

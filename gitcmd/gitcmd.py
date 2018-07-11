@@ -281,8 +281,10 @@ def reset(path, mode="mixed", commit='HEAD'):
     return (p.returncode, out.decode(), err.decode())
 
 
-def pull(path, url, username=None, password=None):
+def pull(path, url=None, username=None, password=None):
     """Fetch from and integrate with another repository or a local branch.
+    
+    If <url> is not given, will try to get the url of origin.
     
     Parameter:
         path : (str) Path from where git pull command will be executed
@@ -299,6 +301,11 @@ def pull(path, url, username=None, password=None):
     
     try:
         os.chdir(path)
+        
+        if not url:
+            ret, url, err = remote_url(path)
+            if ret:
+                return ret, url, "No url was given and couldn't retrieve origin's URL: " + err
         
         if username and password:
             url = urlparse(url)
@@ -328,8 +335,10 @@ def pull(path, url, username=None, password=None):
     return (p.returncode, out, err)
 
 
-def push(path, url, username=None, password=None):
+def push(path, url=None, username=None, password=None):
     """Update remote refs along with associated objects.
+    
+    If <url> is not given, will try to get the url of origin.
     
     Return:
         (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
@@ -340,6 +349,11 @@ def push(path, url, username=None, password=None):
     
     try:
         os.chdir(path)
+        
+        if not url:
+            ret, url, err = remote_url(path)
+            if ret:
+                return ret, url, "No url was given and couldn't retrieve origin's URL: " + err
         
         ret, branch, err = current_branch(path)
         if ret:  # pragma: no cover
