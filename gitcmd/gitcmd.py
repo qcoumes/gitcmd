@@ -272,7 +272,9 @@ def reset(path, mode="mixed", commit='HEAD'):
     
     try:
         os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
-        cmd = "LANGUAGE=" + GIT_LANG + " git reset --" + mode + " " + commit
+        cmd = "LANGUAGE=" + GIT_LANG + " git reset --" + mode + (" -- " + os.path.basename(path)
+                                                                 if not os.path.isdir(path)
+                                                                 else "")
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
