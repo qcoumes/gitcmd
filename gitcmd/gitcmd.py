@@ -312,7 +312,7 @@ def pull(path, url=None, username=None, password=None):
         if username and password:
             url = urlparse(url)
             cmd = ("LANGUAGE=" + GIT_LANG
-                 + "git pull " + url.scheme + "://" + username + ":" + password
+                 + " git pull " + url.scheme + "://" + username + ":" + password
                  + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git pull"
@@ -363,8 +363,9 @@ def push(path, url=None, username=None, password=None):
         
         if username and password:
             url = urlparse(url)
-            cmd = ("LANGUAGE=" + GIT_LANG + " git push "
-                 + url.scheme + "://" + username + ":" + password + "@" + url.netloc + url.path)
+            cmd = ("LANGUAGE=" + GIT_LANG
+                 + " git push " + url.scheme + "://" + username + ":" + password
+                 + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git push"
         else:
@@ -408,7 +409,7 @@ def clone(path, url, to=None, username=None, password=None):
         if username and password:
             url = urlparse(url)
             cmd = ("LANGUAGE=" + GIT_LANG
-                 + "git clone " + url.scheme + "://" + username + ":" + password
+                 + " git clone " + url.scheme + "://" + username + ":" + password
                  + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git clone " + url
