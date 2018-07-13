@@ -139,14 +139,6 @@ def checkout(path, branch=None, new=False):
                     else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
-        
-        if branch and new and not p.returncode:  # Automaticaly set upstream on new branch
-            cmd = ("LANGUAGE=" + GIT_LANG
-                 + " git push -u origin " + branch)
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            out2, err2 = p.communicate()
-            out += out2
-            err += err2
     finally:
         os.chdir(cwd)
     
@@ -309,9 +301,9 @@ def pull(path, url=None, username=None, password=None):
         
         if username and password:
             url = urlparse(url)
-            cmd = ("LANGUAGE=" + GIT_LANG
-                 + "git pull " + url.scheme + "://" + username + ":" + password
-                 + "@" + url.netloc + url.path)
+            cmd = ("LANGUAGE=" + GIT_LANG + "git pull "
+                 + (url.scheme + "://" if url.scheme else "")
+                 + username + ":" + password + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git pull"
         else:
@@ -361,10 +353,13 @@ def push(path, url=None, username=None, password=None):
         
         if username and password:
             url = urlparse(url)
-            cmd = ("LANGUAGE=" + GIT_LANG + " git push "
-                 + url.scheme + "://" + username + ":" + password + "@" + url.netloc + url.path)
+            cmd = ("LANGUAGE=" + GIT_LANG + " git push -u"
+                 + (url.scheme + "://" if url.scheme else "")
+                 + username + ":" + password + "@" + url.netloc + url.path
+                 + " " + branch)
         elif not (username or password):
-            cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git push"
+            cmd = ("LANGUAGE=" + GIT_LANG
+                 + " GIT_TERMINAL_PROMPT=0 git push -u origin " + branch)
         else:
             raise ValueError("Password must be provided if username is given" if username
                              else "Username must be provided if password is given")
@@ -405,9 +400,9 @@ def clone(path, url, to=None, username=None, password=None):
         
         if username and password:
             url = urlparse(url)
-            cmd = ("LANGUAGE=" + GIT_LANG
-                 + "git clone " + url.scheme + "://" + username + ":" + password
-                 + "@" + url.netloc + url.path)
+            cmd = ("LANGUAGE=" + GIT_LANG + "git clone "
+                 + (url.scheme + "://" if url.scheme else "")
+                 + username + ":" + password + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git clone " + url
         else:
