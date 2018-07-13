@@ -355,7 +355,7 @@ def push(path, url=None, username=None, password=None):
         
         if username and password:
             url = urlparse(url)
-            cmd = ("LANGUAGE=" + GIT_LANG + " git push -u"
+            cmd = ("LANGUAGE=" + GIT_LANG + " git push -u "
                  + (url.scheme + "://" if url.scheme else "")
                  + username + ":" + password + "@" + url.netloc + url.path
                  + " " + branch)
