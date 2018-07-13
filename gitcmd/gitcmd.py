@@ -303,7 +303,7 @@ def pull(path, url=None, username=None, password=None):
         
         if username and password:
             url = urlparse(url)
-            cmd = ("LANGUAGE=" + GIT_LANG + "git pull "
+            cmd = ("LANGUAGE=" + GIT_LANG + " git pull "
                  + (url.scheme + "://" if url.scheme else "")
                  + username + ":" + password + "@" + url.netloc + url.path)
         elif not (username or password):
@@ -402,7 +402,7 @@ def clone(path, url, to=None, username=None, password=None):
         
         if username and password:
             url = urlparse(url)
-            cmd = ("LANGUAGE=" + GIT_LANG + "git clone "
+            cmd = ("LANGUAGE=" + GIT_LANG + " git clone "
                  + (url.scheme + "://" if url.scheme else "")
                  + username + ":" + password + "@" + url.netloc + url.path)
         elif not (username or password):
