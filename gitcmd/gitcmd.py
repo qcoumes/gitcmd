@@ -304,7 +304,7 @@ def pull(path, url=None, username=None, password=None):
         if username and password:
             url = urlparse(url)
             cmd = ("LANGUAGE=" + GIT_LANG + " git pull "
-                 + (url.scheme + "://" if url.scheme else "")
+                 + (url.scheme if url.scheme else "file") + "://"
                  + username + ":" + password + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git pull"
