@@ -65,13 +65,11 @@ def remote_url(path, remote='origin'):
         os.chdir(cwd)
     
     return (p.returncode, out.decode(), err.decode())
-    
+
 
 def make_public_url(url):
     """Return the url stripped of any credentials.
-
     I.E. https://login:password@github.com/qcoumes/gitcmd -> https://github.com/qcoumes/gitcmd"""
-        
     reg = re.compile(r'(?P<www>www\.)?(.*?:.*?@)?(?P<netloc>.*)')
     url = urlparse(url)
     match = reg.match(url.netloc)
@@ -79,6 +77,24 @@ def make_public_url(url):
     url = list(url)  # url is a tuple and can't be modified
     url[1] = netloc  # 1 is netloc
     return urlunparse(url)
+
+
+def set_url(path, url, remote='origin'):
+    """Set the url of remote to <url>."""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
+    cwd = os.getcwd()
+    
+    try:
+        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        cmd = "git remote set-url " + remote + " " + url
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        out, err = p.communicate()
+    finally:
+        os.chdir(cwd)
+    
+    return (p.returncode, out.decode(), err.decode())
 
 
 def add(path):

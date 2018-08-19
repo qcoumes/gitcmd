@@ -444,4 +444,19 @@ class TestGitcmd(unittest.TestCase):
         psecret = gitcmd.make_public_url(secret)
         self.assertEqual(public2, psecret)
         self.assertTrue('login' not in psecret and 'password' not in psecret)
+    
+    
+    def test_1300_set_url(self):
+        gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
+        url = 'https://github.com/qcoumes/gitcmd'
         
+        ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[:-1], HOST_DIR)
+        
+        ret, out, err = gitcmd.set_url(os.path.join(LOCAL_DIRS, 'local'), url)
+        self.assertEqual(ret, 0)
+        
+        ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[:-1], url)
