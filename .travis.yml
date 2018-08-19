@@ -17,3 +17,12 @@ script:
  
 after_success:
     - coveralls
+
+deploy:
+    provider: pypi
+    user: "qcoumes"
+    password:
+        secure: MM7e7vzkV+aHOQI2/A3V1DAeQ6/Kz9CsKvbXEsE2W/UOfo+S9OT9pzGd93lp71sHOUoAyzJJTJC1YFo1f1Kvq2SI3geRNr4zfwwkdC5G7WdOs7N99PjpN6/Fdv3jW3jdP18Lr66H8AjvLlDX9KvAf+xdNx2hitSflGZQluCv1IUYvq8Sj2chWX+bKFquZFK+hJpATC1QkMxYBUKqfxYQqBo28KEAJOrgHQa5Xa7/Bm0/aRrYirTgila4rpWsS5Ze78NOaUjUeo9Q+IKygIEdzfKHSclgUXLxjMI78+75E0Rxj5urJt+7eZjeNy/2/fTeixHilLaVLgGXLvbh/KqcSfh1Z/wUbJukehvtWFTSFDc/RcAriHpkUkMXTgbZaT2nNfITjt7+4KRVbT9a92TfP0c4r9udusFGsueIMjeedeYA4L3uksrexlSyS/1RCmmbtx+eQNA0Bvv1DRhZk7e4hE+R0p/xmCBqZmiqqdaKMN9n2E7m8+4H3BCKJ/eTVA1tjMs/DcEwXc+oyGXjWH9OjeFmcBvAKpO7LyzhIOmoCXv6BRF4BsxDtkv599k7VX/JtwPtSVG3oaaC6S/L0R+eZw60zNUsY2dFkU7++H+0gulcM35Bz65XdIwuF9jgxuGTBJ+1jMN7mWOy1gPct5fsBiP4F0TAc1SLtk5e5Vxcado=
+    on:
+        python: 3.6
+        condition: "$TRAVIS_EVENT_TYPE != cron"
