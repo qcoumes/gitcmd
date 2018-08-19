@@ -460,3 +460,8 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
         self.assertEqual(ret, 0)
         self.assertEqual(out[:-1], url)
+    
+    
+    def test_1301_set_url_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.set_url('/tmp', 'url')
