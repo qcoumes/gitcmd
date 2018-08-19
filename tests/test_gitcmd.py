@@ -431,3 +431,17 @@ class TestGitcmd(unittest.TestCase):
     def test_1101_remote_url_exception(self, remote='origin'):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.remote_url('/tmp')
+    
+    
+    def test_1200_make_public_url(self):
+        public1 = "http://www.google.com"
+        public2 = "https://github.com/qcoumes/gitcmd"
+        secret = "https://login:password@github.com/qcoumes/gitcmd"
+        
+        self.assertEqual(public1, gitcmd.make_public_url(public1))
+        self.assertEqual(public2, gitcmd.make_public_url(public2))
+        
+        psecret = gitcmd.make_public_url(secret)
+        self.assertEqual(public2, psecret)
+        self.assertTrue('login' not in psecret and 'password' not in psecret)
+        

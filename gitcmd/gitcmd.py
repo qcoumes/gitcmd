@@ -6,10 +6,11 @@
 
 
 import os
+import re
 import subprocess
 import locale
 
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 
 # Can be override to specify git language. Should be in the form 'lang.encoding'.
@@ -65,6 +66,20 @@ def remote_url(path, remote='origin'):
     
     return (p.returncode, out.decode(), err.decode())
     
+
+def make_public_url(url):
+    """Return the url stripped of any credentials.
+
+    I.E. https://login:password@github.com/qcoumes/gitcmd -> https://github.com/qcoumes/gitcmd"""
+        
+    reg = re.compile(r'(?P<www>www\.)?(.*?:.*?@)?(?P<netloc>.*)')
+    url = urlparse(url)
+    match = reg.match(url.netloc)
+    netloc = (match.group('www') if match.group('www') else '') + match.group('netloc')
+    url = list(url)  # url is a tuple and can't be modified
+    url[1] = netloc  # 1 is netloc
+    return urlunparse(url)
+
 
 def add(path):
     """Add the file pointed by path to the index.
