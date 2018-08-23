@@ -2,7 +2,13 @@ Changelog
 =========
 
 
-0.1.1
+1.1.2
+-----
+
+- Adding remote_url() function which return the absolute path of the top-level directory (the one containing the .git directory).
+
+
+1.1.1
 -----
 
 - Adding make_public_url() function to transform a url with credential to a public one.
@@ -10,7 +16,7 @@ Changelog
 
 
 
-0.1.0
+1.0.0
 -----
 
 - Initial public release

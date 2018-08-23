@@ -32,6 +32,8 @@ It also provides some useful functions:
  * `remote_url(path, remote='origin')` - Return the remote's URL (default 'origin') of the repository pointed by path.
  * `make_public_url(url)` - Return the url stripped of any credentials. I.E. `https://login:password@github.com/qcoumes/gitcmd` -> `https://github.com/qcoumes/gitcmd`.
  * `set_url(path, url)` - Set the remote url to <url>.
+ * `top_level(path)` - Return the absolute path of the top-level directory (the one containing the .git directory).
+
  
 Every function of this module returns a tuple *(return_code, stdout, stderr)*.  
 **Be careful** : Git sometimes return information on stderr, even if return_code = 0.  

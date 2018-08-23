@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from .gitcmd import (in_repository, add, commit, checkout, status, branch, current_branch, reset,
-                     pull, push, clone, remote_url, make_public_url, set_url, GIT_LANG)
+                     pull, push, clone, remote_url, make_public_url, set_url, top_level, GIT_LANG)
 
 __title__ = 'gitcmd'
-__version__ = '1.1.0'
+__version__ = '0.1.2'
 VERSION = __version__

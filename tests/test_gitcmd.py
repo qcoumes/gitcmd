@@ -11,8 +11,9 @@ from gitcmd import gitcmd
 
 gitcmd.GIT_LANG = 'en_US.UTF-8'
 
-HOST_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "host")
-LOCAL_DIRS = os.path.join(os.path.dirname(os.path.realpath(__file__)), "local/")
+FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+HOST_DIR = os.path.join(FILE_DIR, "host")
+LOCAL_DIRS = os.path.join(FILE_DIR, "local/")
 
 def command(cmd):
     p = subprocess.Popen(
@@ -321,7 +322,7 @@ class TestGitcmd(unittest.TestCase):
         self.assertEqual(out, "test_branch\n")
     
     
-    def test801_current_branch_exception(self):
+    def test0801_current_branch_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.current_branch('/tmp')
     
@@ -421,19 +422,19 @@ class TestGitcmd(unittest.TestCase):
             gitcmd.pull('/tmp', 'url')
     
     
-    def test_1100_remote_url(self):
+    def test1100_remote_url(self):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
         self.assertEqual(ret, 0)
         self.assertEqual(out[:-1], HOST_DIR)
     
     
-    def test_1101_remote_url_exception(self, remote='origin'):
+    def test1101_remote_url_exception(self, remote='origin'):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.remote_url('/tmp')
     
     
-    def test_1200_make_public_url(self):
+    def test1200_make_public_url(self):
         public1 = "http://www.google.com"
         public2 = "https://github.com/qcoumes/gitcmd"
         secret = "https://login:password@github.com/qcoumes/gitcmd"
@@ -446,7 +447,7 @@ class TestGitcmd(unittest.TestCase):
         self.assertTrue('login' not in psecret and 'password' not in psecret)
     
     
-    def test_1300_set_url(self):
+    def test1300_set_url(self):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         url = 'https://github.com/qcoumes/gitcmd'
         
@@ -462,6 +463,17 @@ class TestGitcmd(unittest.TestCase):
         self.assertEqual(out[:-1], url)
     
     
-    def test_1301_set_url_exception(self):
+    def test1301_set_url_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.set_url('/tmp', 'url')
+    
+    
+    def test1400_top_level(self):
+        ret, out, err = gitcmd.top_level(LOCAL_DIRS)
+        self.assertEqual(ret, 0)
+        self.assertEqual(out, os.path.dirname(FILE_DIR))
+    
+    
+    def test1401_top_level_exception(self):
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.top_level('/tmp')
