@@ -4,5 +4,5 @@ from .gitcmd import (in_repository, add, commit, checkout, status, branch, curre
                      pull, push, clone, remote_url, make_public_url, set_url, top_level, GIT_LANG)
 
 __title__ = 'gitcmd'
-__version__ = '0.1.2'
+__version__ = '1.1.3'
 VERSION = __version__

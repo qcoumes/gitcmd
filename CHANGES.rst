@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+1.1.3
+-----
+
+- Fixing bugs occuring when paths point to directory.
+
+
 1.1.2
 -----
 
