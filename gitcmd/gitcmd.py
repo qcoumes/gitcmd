@@ -33,7 +33,12 @@ def in_repository(path, ignore=True):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = 'git rev-parse 2> /dev/null > /dev/null'
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         p.communicate()
@@ -57,7 +62,12 @@ def top_level(path):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = "git rev-parse --show-toplevel"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
@@ -76,7 +86,12 @@ def remote_url(path, remote='origin'):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = "git config --get remote." + remote + ".url"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
@@ -106,7 +121,12 @@ def set_url(path, url, remote='origin'):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = "git remote set-url " + remote + " " + url
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
@@ -130,7 +150,12 @@ def add(path):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = "LANGUAGE=" + GIT_LANG + " git add " + path
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
@@ -151,7 +176,12 @@ def commit(path, log):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = "LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
@@ -183,7 +213,12 @@ def checkout(path, branch=None, new=False):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = ("LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
                 else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
                     else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch)
@@ -257,7 +292,12 @@ def current_branch(path):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path)
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = "LANGUAGE=" + GIT_LANG + " git rev-parse --abbrev-ref HEAD"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
@@ -313,7 +353,12 @@ def reset(path, mode="mixed", commit='HEAD'):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path) if os.path.isdir(path) else os.chdir(os.path.dirname(path))
+        if os.path.isdir(path):
+            os.chdir(path)
+            path = "."
+        else:
+            os.chdir(os.path.dirname(path))
+            path = os.path.basename(path)
         cmd = "LANGUAGE=" + GIT_LANG + " git reset --" + mode + (" -- " + os.path.basename(path)
                                                                  if not os.path.isdir(path)
                                                                  else "")
@@ -341,15 +386,17 @@ def pull(path, url=None, username=None, password=None):
     if not in_repository(path):
         raise NotInRepositoryError("'" + path + "' is not inside a repository")
     
+    if not url:
+        ret, url, err = remote_url(path)
+        if ret:  # pragma: no cover
+            return ret, url, "No url was given and couldn't retrieve origin's URL: " + err
+    
     cwd = os.getcwd()
     
     try:
+        if not os.path.isdir(path):
+            raise ValueError("Path must point to a directory")
         os.chdir(path)
-        
-        if not url:
-            ret, url, err = remote_url(path)
-            if ret:
-                return ret, url, "No url was given and couldn't retrieve origin's URL: " + err
         
         if username and password:
             url = urlparse(url)
@@ -389,19 +436,21 @@ def push(path, url=None, username=None, password=None):
     if not in_repository(path):
         raise NotInRepositoryError("'" + path + "' is not inside a repository")
     
+    if not url:
+        ret, url, err = remote_url(path)
+        if ret:  # pragma: no cover
+            return ret, url, "No url was given and couldn't retrieve origin's URL: " + err
+    
+    ret, branch, err = current_branch(path)
+    if ret:  # pragma: no cover
+        return (ret, branch, "Couldn't retrieve current branch name \n".encode() + err)
+    
     cwd = os.getcwd()
     
     try:
+        if not os.path.isdir(path):
+            raise ValueError("Path must point to a directory")
         os.chdir(path)
-        
-        if not url:
-            ret, url, err = remote_url(path)
-            if ret:
-                return ret, url, "No url was given and couldn't retrieve origin's URL: " + err
-        
-        ret, branch, err = current_branch(path)
-        if ret:  # pragma: no cover
-            return (ret, branch, "Couldn't retrieve current branch name \n".encode() + err)
         
         if username and password:
             url = urlparse(url)
@@ -448,6 +497,8 @@ def clone(path, url, to=None, username=None, password=None):
     cwd = os.getcwd()
     
     try:
+        if not os.path.isdir(path):
+            raise ValueError("Path must point to a directory")
         os.chdir(path)
         
         if username and password:
