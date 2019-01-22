@@ -4,12 +4,10 @@
     
     Does not work with git version prior to 2.7"""
 
-
+import locale
 import os
 import re
 import subprocess
-import locale
-
 from urllib.parse import urlparse, urlunparse
 
 
@@ -26,7 +24,7 @@ class NotInRepositoryError(Exception):
 
 def in_repository(path, ignore=True):
     """Return True if path is inside a repository, False if not.
-        
+    
     If <in_ignore> is set to False, will also return False if the path is inside a repository but
     is ignored by a .gitignore.
     """
@@ -54,6 +52,7 @@ def in_repository(path, ignore=True):
     return ret
 
 
+
 def top_level(path):
     """Return the absolute path of the top-level directory."""
     if not in_repository(path):
@@ -64,18 +63,16 @@ def top_level(path):
     try:
         if os.path.isdir(path):
             os.chdir(path)
-            path = "."
         else:
             os.chdir(os.path.dirname(path))
-            path = os.path.basename(path)
         cmd = "git rev-parse --show-toplevel"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode()[:-1], err.decode())
-    
+    return p.returncode, out.decode()[:-1], err.decode()
+
 
 
 def remote_url(path, remote='origin'):
@@ -88,17 +85,16 @@ def remote_url(path, remote='origin'):
     try:
         if os.path.isdir(path):
             os.chdir(path)
-            path = "."
         else:
             os.chdir(os.path.dirname(path))
-            path = os.path.basename(path)
         cmd = "git config --get remote." + remote + ".url"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def make_public_url(url):
@@ -113,6 +109,7 @@ def make_public_url(url):
     return urlunparse(url)
 
 
+
 def set_url(path, url, remote='origin'):
     """Set the url of remote to <url>."""
     if not in_repository(path):
@@ -123,17 +120,16 @@ def set_url(path, url, remote='origin'):
     try:
         if os.path.isdir(path):
             os.chdir(path)
-            path = "."
         else:
             os.chdir(os.path.dirname(path))
-            path = os.path.basename(path)
         cmd = "git remote set-url " + remote + " " + url
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def add(path):
@@ -162,7 +158,8 @@ def add(path):
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def commit(path, log):
@@ -188,7 +185,8 @@ def commit(path, log):
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def checkout(path, branch=None, new=False):
@@ -199,7 +197,7 @@ def checkout(path, branch=None, new=False):
             if no branch given - Path to the entry wich should be restored.
             if branch is given - Path from where git checkout command will be executed.
         branch: (str) name of the branch which we should checkout to
-        new: (bool) Wheter we should create a new branch (True) or not (False)
+        new: (bool) Whether we should create a new branch (True) or not (False)
     
     
     Restore working tree files pointed by path if no <branch> is given.
@@ -219,15 +217,18 @@ def checkout(path, branch=None, new=False):
         else:
             os.chdir(os.path.dirname(path))
             path = os.path.basename(path)
-        cmd = ("LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
-                else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
-                    else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch)
+        cmd = (
+            "LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
+            else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
+            else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch
+        )
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def status(path):
@@ -244,14 +245,18 @@ def status(path):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path)
+        if os.path.isdir(path):
+            os.chdir(path)
+        else:
+            os.chdir(os.path.dirname(path))
         cmd = "LANGUAGE=" + GIT_LANG + " git status"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def branch(path):
@@ -268,14 +273,18 @@ def branch(path):
     cwd = os.getcwd()
     
     try:
-        os.chdir(path)
+        if os.path.isdir(path):
+            os.chdir(path)
+        else:
+            os.chdir(os.path.dirname(path))
         cmd = "LANGUAGE=" + GIT_LANG + " git branch"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def current_branch(path):
@@ -294,17 +303,16 @@ def current_branch(path):
     try:
         if os.path.isdir(path):
             os.chdir(path)
-            path = "."
         else:
             os.chdir(os.path.dirname(path))
-            path = os.path.basename(path)
         cmd = "LANGUAGE=" + GIT_LANG + " git rev-parse --abbrev-ref HEAD"
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def reset(path, mode="mixed", commit='HEAD'):
@@ -313,7 +321,7 @@ def reset(path, mode="mixed", commit='HEAD'):
     Parameter:
         path   : (str) path the the entry we should be reset.
         mode   : (str) Mode for the reset, should be 'soft', 'mixed', 'hard', 'merge' or 'keep'.
-        commit : (str) To which commit the reset shoul be done. Must be a commit's hash, 'HEAD' for
+        commit : (str) To which commit the reset should be done. Must be a commit's hash, 'HEAD' for
                        the last commit, to which '~' or '^' can be appended to choose ancestor or
                        parent.
     
@@ -348,7 +356,7 @@ def reset(path, mode="mixed", commit='HEAD'):
         raise NotInRepositoryError("'" + path + "' is not inside a repository")
     if mode and mode not in ["soft", "mixed", "hard", "merge", "keep"]:
         raise ValueError("Mode must be one of the following: "
-                       + "'soft', 'mixed', 'hard', 'merge' or 'keep'.")
+                         + "'soft', 'mixed', 'hard', 'merge' or 'keep'.")
     
     cwd = os.getcwd()
     
@@ -359,15 +367,14 @@ def reset(path, mode="mixed", commit='HEAD'):
         else:
             os.chdir(os.path.dirname(path))
             path = os.path.basename(path)
-        cmd = "LANGUAGE=" + GIT_LANG + " git reset --" + mode + (" -- " + os.path.basename(path)
-                                                                 if not os.path.isdir(path)
-                                                                 else "")
+        cmd = "LANGUAGE=%s git reset --%s %s %s" % (GIT_LANG, mode, commit, path)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return (p.returncode, out.decode(), err.decode())
+    return p.returncode, out.decode(), err.decode()
+
 
 
 def pull(path, url=None, username=None, password=None):
@@ -394,21 +401,22 @@ def pull(path, url=None, username=None, password=None):
     cwd = os.getcwd()
     
     try:
-        if not os.path.isdir(path):
-            raise ValueError("Path must point to a directory")
-        os.chdir(path)
+        if os.path.isdir(path):
+            os.chdir(path)
+        else:
+            os.chdir(os.path.dirname(path))
         
         if username and password:
             url = urlparse(url)
             cmd = ("LANGUAGE=" + GIT_LANG + " git pull "
-                 + (url.scheme if url.scheme else "file") + "://"
-                 + username + ":" + password + "@" + url.netloc + url.path)
+                   + (url.scheme if url.scheme else "file") + "://"
+                   + username + ":" + password + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git pull"
         else:
             raise ValueError("Password must be provided if username is given" if username
                              else "Username must be provided if password is given")
-                        
+        
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
         
@@ -417,13 +425,14 @@ def pull(path, url=None, username=None, password=None):
         if password:
             out = out.replace(password, "•" * len(password))
             err = err.replace(password, "•" * len(password))
-            
+    
     finally:
         os.chdir(cwd)
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return (p.returncode, out, err)
+    return p.returncode, out, err
+
 
 
 def push(path, url=None, username=None, password=None):
@@ -443,28 +452,29 @@ def push(path, url=None, username=None, password=None):
     
     ret, branch, err = current_branch(path)
     if ret:  # pragma: no cover
-        return (ret, branch, "Couldn't retrieve current branch name \n".encode() + err)
+        return ret, branch, "Couldn't retrieve current branch name \n".encode() + err
     
     cwd = os.getcwd()
     
     try:
-        if not os.path.isdir(path):
-            raise ValueError("Path must point to a directory")
-        os.chdir(path)
+        if os.path.isdir(path):
+            os.chdir(path)
+        else:
+            os.chdir(os.path.dirname(path))
         
         if username and password:
             url = urlparse(url)
             cmd = ("LANGUAGE=" + GIT_LANG + " git push -u "
-                 + (url.scheme + "://" if url.scheme else "")
-                 + username + ":" + password + "@" + url.netloc + url.path
-                 + " " + branch)
+                   + (url.scheme + "://" if url.scheme else "")
+                   + username + ":" + password + "@" + url.netloc + url.path
+                   + " " + branch)
         elif not (username or password):
             cmd = ("LANGUAGE=" + GIT_LANG
-                 + " GIT_TERMINAL_PROMPT=0 git push -u origin " + branch)
+                   + " GIT_TERMINAL_PROMPT=0 git push -u origin " + branch)
         else:
             raise ValueError("Password must be provided if username is given" if username
                              else "Username must be provided if password is given")
-            
+        
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
         
@@ -473,13 +483,14 @@ def push(path, url=None, username=None, password=None):
         if password:
             out = out.replace(password, "•" * len(password))
             err = err.replace(password, "•" * len(password))
-            
+    
     finally:
         os.chdir(cwd)
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return (p.returncode, out, err)
+    return p.returncode, out, err
+
 
 
 def clone(path, url, to=None, username=None, password=None):
@@ -497,15 +508,16 @@ def clone(path, url, to=None, username=None, password=None):
     cwd = os.getcwd()
     
     try:
-        if not os.path.isdir(path):
-            raise ValueError("Path must point to a directory")
-        os.chdir(path)
+        if os.path.isdir(path):
+            os.chdir(path)
+        else:
+            os.chdir(os.path.dirname(path))
         
         if username and password:
             url = urlparse(url)
             cmd = ("LANGUAGE=" + GIT_LANG + " git clone "
-                 + (url.scheme + "://" if url.scheme else "")
-                 + username + ":" + password + "@" + url.netloc + url.path)
+                   + (url.scheme + "://" if url.scheme else "")
+                   + username + ":" + password + "@" + url.netloc + url.path)
         elif not (username or password):
             cmd = "LANGUAGE=" + GIT_LANG + " GIT_TERMINAL_PROMPT=0 git clone " + url
         else:
@@ -523,10 +535,45 @@ def clone(path, url, to=None, username=None, password=None):
         if password:
             out = out.replace(password, "•" * len(password))
             err = err.replace(password, "•" * len(password))
-            
+    
     finally:
         os.chdir(cwd)
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return (p.returncode, out, err)
+    return p.returncode, out, err
+
+
+
+def show_last_revision(path):
+    """Show the last revision of the file at path.
+    
+    Parameter:
+        path : (str) - path to the file
+    
+    Return:
+        (return_code, stdout, stderr), both stderr and stdout are decoded in UTF-8"""
+    if not in_repository(path):
+        raise NotInRepositoryError("'" + path + "' is not inside a repository")
+    
+    cwd = os.getcwd()
+    try:
+        if not os.path.isfile(path):
+            raise ValueError("Error: '%s' is a directory")
+        os.chdir(os.path.dirname(path))
+        path = os.path.basename(path)
+        
+        cmd = "LANGUAGE=" + GIT_LANG + " git show -1 " + path
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        out, err = p.communicate()
+    finally:
+        os.chdir(cwd)
+    
+    out = out.decode()
+    if not p.returncode:
+        if '@@' in out:
+            out = [c[1:] for c in out[out.index('@@'):].split('\n')[1:]]
+            out = '\n'.join(out).replace(' No newline at end of file', '')
+        else:
+            out = '\n'.join([c.strip() for c in out.split('\n')[4:-4]])
+    return p.returncode, out, err.decode()

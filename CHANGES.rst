@@ -4,6 +4,7 @@ Changelog
 1.1.4
 -----
 
+- Add show_last_revision()
 - Now default to basename if path is a directory in every function.
 
 

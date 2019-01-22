@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-import unittest
 import shutil
 import subprocess
+import unittest
 
 from gitcmd import gitcmd
-
 
 
 gitcmd.GIT_LANG = 'en_US.UTF-8'
@@ -14,6 +13,8 @@ gitcmd.GIT_LANG = 'en_US.UTF-8'
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 HOST_DIR = os.path.join(FILE_DIR, "host")
 LOCAL_DIRS = os.path.join(FILE_DIR, "local/")
+
+
 
 def command(cmd):
     p = subprocess.Popen(
@@ -24,7 +25,9 @@ def command(cmd):
     )
     out, err = p.communicate()
     if p.returncode:
-        raise RuntimeError("Return code : " + str(p.returncode) + " - " + err.decode() + out.decode())
+        raise RuntimeError(
+            "Return code : " + str(p.returncode) + " - " + err.decode() + out.decode())
+
 
 
 class TestGitcmd(unittest.TestCase):
@@ -35,7 +38,7 @@ class TestGitcmd(unittest.TestCase):
         if os.path.isdir(LOCAL_DIRS):
             shutil.rmtree(LOCAL_DIRS)
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(local,'file.txt')
+        test_file = os.path.join(local, 'file.txt')
         os.makedirs(LOCAL_DIRS)
         
         cwd = os.getcwd()
@@ -58,14 +61,14 @@ class TestGitcmd(unittest.TestCase):
     
     
     def test0000_in_repository(self):
-        test_file = os.path.join(LOCAL_DIRS,'local/file.txt')
+        test_file = os.path.join(LOCAL_DIRS, 'local/file.txt')
         
         self.assertTrue(gitcmd.in_repository(test_file))
         self.assertTrue(gitcmd.in_repository(test_file, False))
     
     
     def test0001_not_in_repository(self):
-        test_file = os.path.join(LOCAL_DIRS,'/tmp')
+        test_file = os.path.join(LOCAL_DIRS, '/tmp')
         
         self.assertFalse(gitcmd.in_repository(test_file))
         self.assertFalse(gitcmd.in_repository(test_file, False))
@@ -73,9 +76,9 @@ class TestGitcmd(unittest.TestCase):
     
     def test0002_in_repository_ignored(self):
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(LOCAL_DIRS,'local/file2.txt')
+        test_file = os.path.join(LOCAL_DIRS, 'local/file2.txt')
         open(test_file, 'w+').close()
-        with open(os.path.join(local,'.gitignore'), 'w+') as f:
+        with open(os.path.join(local, '.gitignore'), 'w+') as f:
             print("file2.txt", file=f)
         
         self.assertTrue(gitcmd.in_repository(test_file))
@@ -94,15 +97,16 @@ class TestGitcmd(unittest.TestCase):
     
     def test0102_clone_exception(self):
         with self.assertRaises(ValueError):
-            gitcmd.clone(os.path.join(LOCAL_DIRS,'local/file2.txt'), HOST_DIR, to='test')
+            gitcmd.clone(os.path.join(LOCAL_DIRS, 'local/file2.txt'), HOST_DIR, to='test',
+                         username="user")
     
     
     def test0102_clone_need_credentials(self):
-        pass #TODO - Testing access denied by a private repository when not providing credentials
+        pass  # TODO - Testing access denied by a private repository when not providing credentials
     
     
     def test0103_clone_credentials(self):
-        pass #TODO - Testing access to a private repository when providing credentials
+        pass  # TODO - Testing access to a private repository when providing credentials
     
     
     def test0200_add(self):
@@ -157,7 +161,6 @@ class TestGitcmd(unittest.TestCase):
     
     def test0400_status_clean(self):
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(local, 'test')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.status(local)
@@ -191,18 +194,25 @@ class TestGitcmd(unittest.TestCase):
         self.assertTrue('Changes to be committed:' in out)
     
     
-    def test0403_status_to_commit(self):
+    def test0403_status_committed(self):
         local = os.path.join(LOCAL_DIRS, 'local')
         test_file = os.path.join(local, 'test')
+        test_file2 = os.path.join(local, 'test2')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         open(test_file, 'w+').close()
         gitcmd.add(test_file)
         gitcmd.commit(test_file, 'test')
         ret, out, err = gitcmd.status(local)
-        
         self.assertEqual(ret, 0)
-        self.assertTrue('Your branch is ahead of \'origin/master\' by 1 commit.' in out)
+        self.assertIn("Your branch is ahead of 'origin/master' by 1 commit.", out)
+        
+        open(test_file2, 'w+').close()
+        gitcmd.add(test_file2)
+        gitcmd.commit(test_file2, 'test')
+        ret, out, err = gitcmd.status(test_file2)
+        self.assertEqual(ret, 0)
+        self.assertIn("Your branch is ahead of 'origin/master' by 2 commits.", out)
     
     
     def test0404_status_exception(self):
@@ -221,7 +231,7 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.push(local, HOST_DIR)
         
         self.assertEqual(ret, 0)
-        self.assertTrue("master -> master" in err)
+        self.assertIn("master -> master", err)
     
     
     def test0501_push_no_url(self):
@@ -235,15 +245,15 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.push(local)
         
         self.assertEqual(ret, 0)
-        self.assertTrue("master -> master" in err)
+        self.assertIn("master -> master", err)
     
     
     def test0502_push_need_credentials(self):
-        pass #TODO - Testing access denied by a private repository when not providing credentials
+        pass  # TODO - Testing access denied by a private repository when not providing credentials
     
     
     def test0503_push_credentials(self):
-        pass #TODO - Testing access to a private repository when providing credentials
+        pass  # TODO - Testing access to a private repository when providing credentials
     
     
     def test0504_push_exception(self):
@@ -252,7 +262,7 @@ class TestGitcmd(unittest.TestCase):
         
         local = os.path.join(LOCAL_DIRS, 'local')
         with self.assertRaises(ValueError):
-            gitcmd.push(os.path.join(local, 'test'), 'url')
+            gitcmd.push(os.path.join(local, 'test'), 'url', "username")
     
     
     def test0600_branch(self):
@@ -268,6 +278,10 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.branch(local)
         self.assertEqual(ret, 0)
         self.assertEqual(out, "* master\n")
+        
+        ret, out, err = gitcmd.branch(test_file)
+        self.assertEqual(ret, 0)
+        self.assertEqual(out, "* master\n")
     
     
     def test0601_branch_exception(self):
@@ -277,35 +291,32 @@ class TestGitcmd(unittest.TestCase):
     
     def test0700_checkout(self):
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(local, 'test')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
-        with open(os.path.join(local,'file.txt'), 'w+') as f:
+        with open(os.path.join(local, 'file.txt'), 'w+') as f:
             print("test", file=f)
         ret, out, err = gitcmd.status(local)
         self.assertEqual(ret, 0)
-        self.assertTrue("Changes not staged for commit" in out)
-        ret, out, err = gitcmd.checkout(os.path.join(local,'file.txt'))
+        self.assertIn("Changes not staged for commit", out)
+        ret, out, err = gitcmd.checkout(os.path.join(local, 'file.txt'))
         self.assertEqual(ret, 0)
         ret, out, err = gitcmd.status(local)
-        self.assertTrue("working tree clean" in out)
+        self.assertIn("working tree clean", out)
     
     
     def test0701_checkout_new_branch(self):
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(local, 'test')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.checkout(local, 'test_branch', True)
         self.assertEqual(ret, 0)
-        self.assertTrue("Switched to a new branch 'test_branch'\n" in err)
+        self.assertIn("Switched to a new branch 'test_branch'\n", err)
         ret, out, err = gitcmd.branch(local)
         self.assertEqual("  master\n* test_branch\n", out)
     
     
     def test0702_checkout_branch(self):
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(local, 'test')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         gitcmd.checkout(local, 'test_branch', True)
@@ -318,12 +329,11 @@ class TestGitcmd(unittest.TestCase):
     
     def test0703_checkout_nonexistent_branch(self):
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(local, 'test')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.checkout(local, 'test_branch')
         self.assertEqual(ret, 1)
-        self.assertTrue("pathspec 'test_branch' did not match any file(s) known to git" in err)
+        self.assertIn("pathspec 'test_branch' did not match any file(s) known to git", err)
     
     
     def test0704_checkout_exception(self):
@@ -333,7 +343,7 @@ class TestGitcmd(unittest.TestCase):
     
     def test0800_current_branch(self):
         local = os.path.join(LOCAL_DIRS, 'local')
-        test_file = os.path.join(LOCAL_DIRS,'local/file.txt')
+        test_file = os.path.join(LOCAL_DIRS, 'local/file.txt')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.current_branch(local)
@@ -363,26 +373,26 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.add(test_file)
         ret, out, err = gitcmd.status(local)
         self.assertEqual(ret, 0)
-        self.assertTrue("Changes to be committed" in out)
+        self.assertIn("Changes to be committed", out)
         ret, out, err = gitcmd.reset(local)
         self.assertEqual(ret, 0)
         self.assertEqual("Unstaged changes after reset:\nM\tfile.txt\n", out)
         ret, out, err = gitcmd.status(local)
         self.assertEqual(ret, 0)
-        self.assertTrue("Changes not staged for commit:" in out)
+        self.assertIn("Changes not staged for commit:", out)
         
         with open(test_file, 'w+') as f:
             print("test", file=f)
         gitcmd.add(test_file)
         ret, out, err = gitcmd.status(local)
         self.assertEqual(ret, 0)
-        self.assertTrue("Changes to be committed" in out)
+        self.assertIn("Changes to be committed", out)
         ret, out, err = gitcmd.reset(test_file)
         self.assertEqual(ret, 0)
         self.assertEqual("Unstaged changes after reset:\nM\tfile.txt\n", out)
         ret, out, err = gitcmd.status(local)
         self.assertEqual(ret, 0)
-        self.assertTrue("Changes not staged for commit:" in out)
+        self.assertIn("Changes not staged for commit:", out)
     
     
     def test0902_reset_value_error(self):
@@ -412,7 +422,7 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.push(local, HOST_DIR)
         ret, out, err = gitcmd.pull(local2, HOST_DIR)
         self.assertEqual(ret, 0)
-        self.assertTrue("Fast-forward\n testfile" in out)
+        self.assertIn("Fast-forward\n testfile", out)
         self.assertTrue(os.path.isfile(test_file2))
     
     
@@ -430,15 +440,12 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.push(local, HOST_DIR)
         ret, out, err = gitcmd.pull(local2)
         self.assertEqual(ret, 0)
-        self.assertTrue("Fast-forward\n testfile" in out)
+        self.assertIn("Fast-forward\n testfile", out)
         self.assertTrue(os.path.isfile(test_file2))
     
     
     def test1002_pull_useless(self):
-        local = os.path.join(LOCAL_DIRS, 'local')
         local2 = os.path.join(LOCAL_DIRS, 'local2')
-        test_file = os.path.join(local, 'testfile')
-        test_file2 = os.path.join(local, 'testfile')
         
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local2')
@@ -448,19 +455,18 @@ class TestGitcmd(unittest.TestCase):
     
     
     def test1003_pull_need_credentials(self):
-        pass #TODO - Testing access denied by a private repository when not providing credentials
+        pass  # TODO - Testing access denied by a private repository when not providing credentials
     
     
     def test1004_pull_credentials(self):
-        pass #TODO - Testing access to a private repository when providing credentials
+        pass  # TODO - Testing access to a private repository when providing credentials
     
     
     def test1005_pull_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.pull('/tmp', 'url')
-            
+        
         local = os.path.join(LOCAL_DIRS, 'local')
-        local2 = os.path.join(LOCAL_DIRS, 'local2')
         test_file = os.path.join(local, 'testfile')
         test_file2 = os.path.join(local, 'testfile')
         
@@ -471,13 +477,12 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.commit(test_file, 'test')
         gitcmd.push(local, HOST_DIR)
         with self.assertRaises(ValueError):
-            gitcmd.pull(test_file2, HOST_DIR)
-
+            gitcmd.pull(test_file2, HOST_DIR, "username")
     
     
     def test1100_remote_url(self):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
-        test_file = os.path.join(LOCAL_DIRS,'local/file.txt')
+        test_file = os.path.join(LOCAL_DIRS, 'local/file.txt')
         
         ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
         self.assertEqual(ret, 0)
@@ -488,7 +493,7 @@ class TestGitcmd(unittest.TestCase):
         self.assertEqual(out[:-1], HOST_DIR)
     
     
-    def test1101_remote_url_exception(self, remote='origin'):
+    def test1101_remote_url_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.remote_url('/tmp')
     
@@ -509,7 +514,7 @@ class TestGitcmd(unittest.TestCase):
     def test1300_set_url(self):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         url = 'https://github.com/qcoumes/gitcmd'
-        test_file = os.path.join(LOCAL_DIRS,'local/file.txt')
+        test_file = os.path.join(LOCAL_DIRS, 'local/file.txt')
         
         ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
         self.assertEqual(ret, 0)
@@ -536,7 +541,7 @@ class TestGitcmd(unittest.TestCase):
         self.assertEqual(ret, 0)
         self.assertEqual(out, os.path.dirname(FILE_DIR))
         
-        test_file = os.path.join(LOCAL_DIRS,'local/file.txt')
+        test_file = os.path.join(LOCAL_DIRS, 'local/file.txt')
         ret, out, err = gitcmd.top_level(test_file)
         self.assertEqual(ret, 0)
         self.assertEqual(out, os.path.dirname(test_file))
@@ -545,3 +550,41 @@ class TestGitcmd(unittest.TestCase):
     def test1401_top_level_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):
             gitcmd.top_level('/tmp')
+    
+    
+    def test1500_show_last_revision(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        test_file = os.path.join(local, 'test')
+        
+        open(test_file, 'w+').close()
+        gitcmd.add(test_file)
+        gitcmd.commit(test_file, 'test')
+        with open(test_file, 'w+') as f:
+            print("Test string", file=f)
+        
+        ret, out, err = gitcmd.show_last_revision(test_file)
+        self.assertEqual(ret, 0)
+        self.assertIn('test\n', out)
+
+
+    def test1501_show_last_revision(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        test_file = os.path.join(local, 'test')
+    
+        with open(test_file, 'w+') as f:
+            print("A string", file=f)
+        gitcmd.add(test_file)
+        gitcmd.commit(test_file, 'test')
+        with open(test_file, 'w+') as f:
+            print("Testing changing string", file=f)
+    
+        ret, out, err = gitcmd.show_last_revision(test_file)
+        self.assertEqual(ret, 0)
+        self.assertIn('A string\n', out)
+    
+    def test1502_show_last_revision_exception(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        with self.assertRaises(ValueError):
+            gitcmd.show_last_revision(local)
+        with self.assertRaises(gitcmd.NotInRepositoryError):
+            gitcmd.show_last_revision("/")
