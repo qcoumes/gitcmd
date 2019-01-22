@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.4
+-----
+
+- Now default to basename if path is a directory in every function.
+
 
 1.1.3
 -----

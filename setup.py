@@ -24,13 +24,13 @@ CLASSIFIERS = [
 dirname = os.path.dirname(__file__)
 
 long_description = (
-    codecs.open(os.path.join(dirname, 'README.md'), encoding='utf-8').read() + '\n' +
+    codecs.open(os.path.join(dirname, 'README.md'), encoding='utf-8').read() + '\n\n' +
     codecs.open(os.path.join(dirname, 'CHANGES.rst'), encoding='utf-8').read()
 )
 
 setup(
     name='gitcmd',
-    version='1.1.3',
+    version='1.1.4',
     description='A light interface in python for the basic git commands.',
     long_description=long_description,
     long_description_content_type='text/markdown',
