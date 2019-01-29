@@ -71,7 +71,7 @@ def top_level(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode()[:-1], err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -93,7 +93,7 @@ def remote_url(path, remote='origin'):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -128,7 +128,7 @@ def set_url(path, url, remote='origin'):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -158,7 +158,7 @@ def add(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -185,7 +185,7 @@ def commit(path, log):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -227,7 +227,7 @@ def checkout(path, branch=None, new=False):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -255,7 +255,7 @@ def status(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -283,7 +283,7 @@ def branch(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -311,7 +311,7 @@ def current_branch(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -373,7 +373,7 @@ def reset(path, mode="mixed", commit='HEAD'):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -431,7 +431,7 @@ def pull(path, url=None, username=None, password=None):
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return p.returncode, out, err
+    return p.returncode, out.strip("\n"), err
 
 
 
@@ -489,7 +489,7 @@ def push(path, url=None, username=None, password=None):
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return p.returncode, out, err
+    return p.returncode, out.strip("\n"), err
 
 
 
@@ -541,7 +541,7 @@ def clone(path, url, to=None, username=None, password=None):
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return p.returncode, out, err
+    return p.returncode, out.strip("\n"), err
 
 
 
@@ -576,4 +576,4 @@ def show_last_revision(path):
             out = '\n'.join(out).replace(' No newline at end of file', '')
         else:
             out = '\n'.join([c.strip() for c in out.split('\n')[4:-4]])
-    return p.returncode, out, err.decode()
+    return p.returncode, out.strip("\n"), err.decode()

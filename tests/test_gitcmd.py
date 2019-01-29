@@ -140,7 +140,7 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.commit(test_file, 'test')
         self.assertEqual(ret, 0)
         self.assertTrue(
-            "test\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test\n"
+            "test\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test"
             in out
         )
         
@@ -149,7 +149,7 @@ class TestGitcmd(unittest.TestCase):
         ret, out, err = gitcmd.commit(local, 'test')
         self.assertEqual(ret, 0)
         self.assertTrue(
-            "test\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test2\n"
+            "test\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test2"
             in out
         )
     
@@ -277,11 +277,11 @@ class TestGitcmd(unittest.TestCase):
         
         ret, out, err = gitcmd.branch(local)
         self.assertEqual(ret, 0)
-        self.assertEqual(out, "* master\n")
+        self.assertEqual(out, "* master")
         
         ret, out, err = gitcmd.branch(test_file)
         self.assertEqual(ret, 0)
-        self.assertEqual(out, "* master\n")
+        self.assertEqual(out, "* master")
     
     
     def test0601_branch_exception(self):
@@ -310,9 +310,9 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.checkout(local, 'test_branch', True)
         self.assertEqual(ret, 0)
-        self.assertIn("Switched to a new branch 'test_branch'\n", err)
+        self.assertIn("Switched to a new branch 'test_branch'", err)
         ret, out, err = gitcmd.branch(local)
-        self.assertEqual("  master\n* test_branch\n", out)
+        self.assertEqual("  master\n* test_branch", out)
     
     
     def test0702_checkout_branch(self):
@@ -324,7 +324,7 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.checkout(local, 'master')
         ret, out, err = gitcmd.branch(local)
         self.assertEqual(ret, 0)
-        self.assertEqual("* master\n  test_branch\n", out)
+        self.assertEqual("* master\n  test_branch", out)
     
     
     def test0703_checkout_nonexistent_branch(self):
@@ -348,14 +348,14 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local')
         ret, out, err = gitcmd.current_branch(local)
         self.assertEqual(ret, 0)
-        self.assertEqual(out, "master\n")
+        self.assertEqual(out, "master")
         gitcmd.checkout(local, branch="test_branch", new=True)
         ret, out, err = gitcmd.current_branch(local)
         self.assertEqual(ret, 0)
-        self.assertEqual(out, "test_branch\n")
+        self.assertEqual(out, "test_branch")
         ret, out, err = gitcmd.current_branch(test_file)
         self.assertEqual(ret, 0)
-        self.assertEqual(out, "test_branch\n")
+        self.assertEqual(out, "test_branch")
     
     
     def test0801_current_branch_exception(self):
@@ -376,7 +376,7 @@ class TestGitcmd(unittest.TestCase):
         self.assertIn("Changes to be committed", out)
         ret, out, err = gitcmd.reset(local)
         self.assertEqual(ret, 0)
-        self.assertEqual("Unstaged changes after reset:\nM\tfile.txt\n", out)
+        self.assertEqual("Unstaged changes after reset:\nM\tfile.txt", out)
         ret, out, err = gitcmd.status(local)
         self.assertEqual(ret, 0)
         self.assertIn("Changes not staged for commit:", out)
@@ -389,7 +389,7 @@ class TestGitcmd(unittest.TestCase):
         self.assertIn("Changes to be committed", out)
         ret, out, err = gitcmd.reset(test_file)
         self.assertEqual(ret, 0)
-        self.assertEqual("Unstaged changes after reset:\nM\tfile.txt\n", out)
+        self.assertEqual("Unstaged changes after reset:\nM\tfile.txt", out)
         ret, out, err = gitcmd.status(local)
         self.assertEqual(ret, 0)
         self.assertIn("Changes not staged for commit:", out)
@@ -451,7 +451,7 @@ class TestGitcmd(unittest.TestCase):
         gitcmd.clone(LOCAL_DIRS, HOST_DIR, to='local2')
         ret, out, err = gitcmd.pull(local2, HOST_DIR)
         self.assertEqual(ret, 0)
-        self.assertEqual("Already up to date.\n", out.replace('-', ' '))
+        self.assertEqual("Already up to date.", out.replace('-', ' '))
     
     
     def test1003_pull_need_credentials(self):
@@ -486,11 +486,11 @@ class TestGitcmd(unittest.TestCase):
         
         ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
         self.assertEqual(ret, 0)
-        self.assertEqual(out[:-1], HOST_DIR)
+        self.assertEqual(out, HOST_DIR)
         
         ret, out, err = gitcmd.remote_url(test_file)
         self.assertEqual(ret, 0)
-        self.assertEqual(out[:-1], HOST_DIR)
+        self.assertEqual(out, HOST_DIR)
     
     
     def test1101_remote_url_exception(self):
@@ -518,7 +518,7 @@ class TestGitcmd(unittest.TestCase):
         
         ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
         self.assertEqual(ret, 0)
-        self.assertEqual(out[:-1], HOST_DIR)
+        self.assertEqual(out, HOST_DIR)
         
         ret, out, err = gitcmd.set_url(os.path.join(LOCAL_DIRS, 'local'), url)
         self.assertEqual(ret, 0)
@@ -528,7 +528,7 @@ class TestGitcmd(unittest.TestCase):
         
         ret, out, err = gitcmd.remote_url(os.path.join(LOCAL_DIRS, 'local'))
         self.assertEqual(ret, 0)
-        self.assertEqual(out[:-1], url)
+        self.assertEqual(out, url)
     
     
     def test1301_set_url_exception(self):
@@ -564,7 +564,7 @@ class TestGitcmd(unittest.TestCase):
         
         ret, out, err = gitcmd.show_last_revision(test_file)
         self.assertEqual(ret, 0)
-        self.assertIn('test\n', out)
+        self.assertIn('test', out)
 
 
     def test1501_show_last_revision(self):
@@ -580,7 +580,7 @@ class TestGitcmd(unittest.TestCase):
     
         ret, out, err = gitcmd.show_last_revision(test_file)
         self.assertEqual(ret, 0)
-        self.assertIn('A string\n', out)
+        self.assertIn('A string', out)
     
     def test1502_show_last_revision_exception(self):
         local = os.path.join(LOCAL_DIRS, 'local')
