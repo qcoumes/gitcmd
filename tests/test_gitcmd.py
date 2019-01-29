@@ -27,6 +27,7 @@ def command(cmd):
     if p.returncode:
         raise RuntimeError(
             "Return code : " + str(p.returncode) + " - " + err.decode() + out.decode())
+    return p.returncode, out.decode().strip(), err.decode()
 
 
 
@@ -152,7 +153,33 @@ class TestGitcmd(unittest.TestCase):
             "test\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test2"
             in out
         )
-    
+        
+    def test0302_commit_name(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        test_file = os.path.join(local, 'test')
+        open(test_file, 'w+').close()
+        gitcmd.add(test_file)
+        gitcmd.commit(test_file, 'test', name="Its Me", mail="test@test.com")
+        cwd = os.getcwd();
+        os.chdir(local)
+        _, out, _ = command("git log")
+        os.chdir(cwd)
+        self.assertIn("Its Me <test@test.com>", out)
+
+
+    def test0302_commit_name_nomail(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        test_file = os.path.join(local, 'test')
+        open(test_file, 'w+').close()
+        with self.assertRaises(ValueError):
+            gitcmd.commit(test_file, 'test', name="Its Me")
+
+    def test0302_commit_mail_noname(self):
+        local = os.path.join(LOCAL_DIRS, 'local')
+        test_file = os.path.join(local, 'test')
+        open(test_file, 'w+').close()
+        with self.assertRaises(ValueError):
+            gitcmd.commit(test_file, 'test', mail="test@test.com")
     
     def test0301_commit_exception(self):
         with self.assertRaises(gitcmd.NotInRepositoryError):

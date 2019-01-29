@@ -162,7 +162,7 @@ def add(path):
 
 
 
-def commit(path, log):
+def commit(path, log, name=None, mail=None):
     """Record changes to the repository using log and -m option.
     
     Return:
@@ -179,7 +179,14 @@ def commit(path, log):
         else:
             os.chdir(os.path.dirname(path))
             path = os.path.basename(path)
-        cmd = "LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
+        if name and mail:
+            cmd = ("LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
+                   + (' --author "' + name + ' <' + mail + '>"' if name else ""))
+        elif not (name or mail):
+            cmd = "LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
+        else:
+            raise ValueError("Name must be provided if mail is given" if mail
+                             else "Mail must be provided if name is given")
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
@@ -218,9 +225,9 @@ def checkout(path, branch=None, new=False):
             os.chdir(os.path.dirname(path))
             path = os.path.basename(path)
         cmd = (
-            "LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
-            else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
-            else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch
+                "LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
+                else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
+                else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch
         )
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
