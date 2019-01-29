@@ -224,11 +224,9 @@ def checkout(path, branch=None, new=False):
         else:
             os.chdir(os.path.dirname(path))
             path = os.path.basename(path)
-        cmd = (
-                "LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
-                else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
-                else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch
-        )
+        cmd = ("LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
+               else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
+               else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
