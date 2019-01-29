@@ -71,7 +71,7 @@ def top_level(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode()[:-1], err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -93,7 +93,7 @@ def remote_url(path, remote='origin'):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -128,7 +128,7 @@ def set_url(path, url, remote='origin'):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -158,11 +158,11 @@ def add(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
-def commit(path, log):
+def commit(path, log, name=None, mail=None):
     """Record changes to the repository using log and -m option.
     
     Return:
@@ -179,13 +179,20 @@ def commit(path, log):
         else:
             os.chdir(os.path.dirname(path))
             path = os.path.basename(path)
-        cmd = "LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
+        if name and mail:
+            cmd = ("LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
+                   + (' --author "' + name + ' <' + mail + '>"' if name else ""))
+        elif not (name or mail):
+            cmd = "LANGUAGE=" + GIT_LANG + " git commit " + path + " -m " + '"' + log + '"'
+        else:
+            raise ValueError("Name must be provided if mail is given" if mail
+                             else "Mail must be provided if name is given")
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -217,17 +224,15 @@ def checkout(path, branch=None, new=False):
         else:
             os.chdir(os.path.dirname(path))
             path = os.path.basename(path)
-        cmd = (
-            "LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
-            else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
-            else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch
-        )
+        cmd = ("LANGUAGE=" + GIT_LANG + " git checkout " + path if not branch
+               else "LANGUAGE=" + GIT_LANG + " git checkout " + branch if not new
+               else "LANGUAGE=" + GIT_LANG + " git checkout -b " + branch)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = p.communicate()
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -255,7 +260,7 @@ def status(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -283,7 +288,7 @@ def branch(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -311,7 +316,7 @@ def current_branch(path):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -373,7 +378,7 @@ def reset(path, mode="mixed", commit='HEAD'):
     finally:
         os.chdir(cwd)
     
-    return p.returncode, out.decode(), err.decode()
+    return p.returncode, out.decode().strip("\n"), err.decode()
 
 
 
@@ -431,7 +436,7 @@ def pull(path, url=None, username=None, password=None):
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return p.returncode, out, err
+    return p.returncode, out.strip("\n"), err
 
 
 
@@ -489,7 +494,7 @@ def push(path, url=None, username=None, password=None):
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return p.returncode, out, err
+    return p.returncode, out.strip("\n"), err
 
 
 
@@ -541,7 +546,7 @@ def clone(path, url, to=None, username=None, password=None):
     
     if p.returncode and "terminal prompts disabled" in err:
         return p.returncode, out, "Repository is private, please provide credentials"
-    return p.returncode, out, err
+    return p.returncode, out.strip("\n"), err
 
 
 
@@ -576,4 +581,4 @@ def show_last_revision(path):
             out = '\n'.join(out).replace(' No newline at end of file', '')
         else:
             out = '\n'.join([c.strip() for c in out.split('\n')[4:-4]])
-    return p.returncode, out, err.decode()
+    return p.returncode, out.strip("\n"), err.decode()
