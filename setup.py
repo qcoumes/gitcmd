@@ -30,7 +30,7 @@ long_description = (
 
 setup(
     name='gitcmd',
-    version='1.1.4',
+    version='1.1.5',
     description='A light interface in python for the basic git commands.',
     long_description=long_description,
     long_description_content_type='text/markdown',
