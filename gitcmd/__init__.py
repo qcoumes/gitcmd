@@ -5,5 +5,5 @@ from .gitcmd import (in_repository, add, commit, checkout, status, branch, curre
                      show_last_revision, GIT_LANG, NotInRepositoryError)
 
 __title__ = 'gitcmd'
-__version__ = '1.1.4'
+__version__ = '1.1.5'
 VERSION = __version__
