@@ -13,8 +13,7 @@ from urllib.parse import urlparse, urlunparse
 
 # Can be override to specify git language. Should be in the form 'lang.encoding'.
 # For instance : 'en-US.UTF-8'
-GIT_LANG = '.'.join(locale.getdefaultlocale())
-
+GIT_LANG = 'en-US.UTF-8'
 
 
 class NotInRepositoryError(Exception):
